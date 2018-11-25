@@ -60,7 +60,7 @@
                     <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
                     <button
                         v-if="Instructions.length"
-                        class="uk-button uk-button-primary"
+                        class="uk-button uk-button-primary uk-modal-close"
                         type="button"
                         v-on:click="submit"
                     >Submit</button>
@@ -71,6 +71,7 @@
 </template>
 <script>
 import axios from "axios";
+import UIkit from 'uikit';
 export default {
   props: ["issueid"],
   data: function() {
@@ -84,17 +85,18 @@ export default {
   methods: {
     submit: function() {
       let payload = {
-        Title: this.Title,
-        Summary: this.Summary,
-        Instructions: this.Instructions,
-        Completed: false,
-        IssueId: this.issueid
+        title: this.Title,
+        summary: this.Summary,
+        instructions: this.Instructions,
+        completed: false,
+        issueId: this.issueid
       };
       let insertme = JSON.stringify(payload);
-      let querystring = `https://jdomaga.lib.id/blobfish-backend/issuecreate/?payload=${insertme}`;
+      let querystring = `https://jdomaga.lib.id/blobfish-backend/addaction/?payload=${insertme}`;
       console.log(querystring);
+      UIkit.notification("Sucessfully Added!", 'success');
       axios.get(querystring).then(res => {
-        console.log(res);
+        console.log(res); 
       });
     },
 

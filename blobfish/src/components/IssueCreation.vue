@@ -62,7 +62,7 @@
                 </form>
                 <p class="uk-text-right">
                     <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                    <button class="uk-button uk-button-primary" type="button" v-on:click="suberino">Submit</button>
+                    <button class="uk-button uk-button-primary uk-modal-close" type="button" v-on:click="suberino">Submit</button>
                 </p>
             </div>
         </div>
@@ -70,6 +70,7 @@
 </template>
 <script>
     import axios from 'axios';
+    import UIkit from 'uikit';
     export default {
         name: "jimmer",
         data: function(){
@@ -84,19 +85,21 @@
         methods: {
             suberino: function (){
                 let payload = {
-                    Title: this.Title,
-                    Severity: this.Severity,
-                    CompletionDate: this.CompletionDate,
-                    Summary: this.Summary,
-                    CompletionGoals: this.CompletionGoals,
-                    Actions: []
+                    title: this.Title,
+                    severity: this.Severity,
+                    completionDate: this.CompletionDate,
+                    summary: this.Summary,
+                    completionGoals: this.CompletionGoals,
+                    actions: [],
+                    author: localStorage.username
                 }
                 let insertme = JSON.stringify(payload);
                 let querystring = `https://jdomaga.lib.id/blobfish-backend/issuecreate/?payload=${insertme}`
                 console.log(querystring);
                 axios.get(querystring)
                     .then((res)=>{
-                        console.log(res);
+                        UIkit.notification("Sucessfully Added!", 'success');
+                        console.log(res.data); 
                     });
             }
         }
