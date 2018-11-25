@@ -22,31 +22,46 @@
                 </li>
             </ul>
         </div>
-        <div class="uk-section uk-section-muted uk-width-2-3">
+        <div class="uk-section uk-section-muted uk-width-2-3" style="height: 1080px">
             <div class="uk-container uk-container-expand">
-                <div class="uk-text-meta">YOU ARE CURRENTLY LOGGED IN AS {{user.name}}</div>
-                <h2>My Actions</h2>
-                <div v-for="action in actions">
-                    <div
-                        class="uk-card uk-card-default uk-card-hover uk-card-body"
-                        style="margin-bottom: 20px;"
-                    >
-                        <div uk-grid>
-                            <div class="uk-width-5-6">
-                                <h3 class="uk-card-title">{{action.title}}</h3>
-                                <div id="issueforaction">{{action.issue}}</div>
-                            </div>
-                            <div class="uk-width-1-6">
-                                <button class="uk-button uk-button-default">Mark as Complete</button>
+                <div v-if="username">
+                    <div class="uk-flex">
+                    <div class="uk-text-meta">YOU ARE CURRENTLY LOGGED IN AS {{username}}.</div>
+                    <a href="#" v-on:click="logout" class="uk-text-meta uk-navbar-right">LOG OUT</a>
+                    </div>
+                    <h2>My Actions</h2>
+                    <div v-for="action in actions">
+                        <div
+                            class="uk-card uk-card-default uk-card-hover uk-card-body"
+                            style="margin-bottom: 20px;"
+                        >
+                            <div uk-grid>
+                                <div class="uk-width-5-6">
+                                    <h3 class="uk-card-title">{{action.title}}</h3>
+                                    <div id="issueforaction">{{action.issue}}</div>
+                                </div>
+                                <div class="uk-width-1-6">
+                                    <button class="uk-button uk-button-default">Mark as Complete</button>
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <h2>Issues I've Identified</h2>
+                    <div v-for="issue in issues">
+                        <router-link :to="{name: 'Issue', params:{iss: issue.id}}">
+                            <IssueCard :issue="issue"></IssueCard>
+                        </router-link>
+                    </div>
                 </div>
-                <h2>Issues I've Identified</h2>
-                <div v-for="issue in issues">
-                    <router-link :to="{name: 'Issue', params:{iss: issue.id}}">
-                        <IssueCard :issue="issue"></IssueCard>
-                    </router-link>
+                <div v-if="!username" class="uk-text-center">
+                    <h2>Log In</h2>
+                    <div class="uk-margin">
+                        <input v-model="inputtedUsername" class="uk-input uk-form-width-large" type="text" placeholder="username">
+                    </div>
+                    <div class="uk-margin">
+                        <input class="uk-input uk-form-width-large" type="text" placeholder="password">
+                    </div>
+                    <button v-on:click="login" class="uk-button uk-button-primary uk-button-large">GO</button>
                 </div>
             </div>
         </div>
@@ -59,13 +74,12 @@ import IssueCard from "./IssueCard";
 export default {
   name: "Dashboard",
   components: {
-      IssueCard
+    IssueCard
   },
   data: function() {
     return {
-      user: {
-        name: "Trent Chappus"
-      },
+      username: '',
+      inputtedUsername: '',
       actions: [
         {
           title: "Raise funds for water filtration plants",
@@ -83,7 +97,7 @@ export default {
         }
       ],
       issues: [
-          {
+        {
           id: 2,
           title: "Roadside trash is at an all-time high",
           percentComplete: 75
@@ -95,6 +109,20 @@ export default {
         }
       ]
     };
+  },
+   mounted: function() {
+      this.username = localStorage.username;
+    },
+  methods: {
+   
+    login: function() {
+        this.username = this.inputtedUsername;
+        localStorage.username = this.username;
+    },
+    logout: function() {
+        this.username = '';
+        localStorage.username = '';
+    }
   }
 };
 </script>
@@ -103,13 +131,20 @@ export default {
 .uk-nav-primary,
 .header,
 h2,
-.uk-text-meta, .uk-card-title, .uk-button {
+.uk-text-meta,
+.uk-card-title,
+.uk-button, .uk-input {
   font-family: "Poppins", sans-serif;
 }
 
 .header {
   font-weight: 700;
   color: #f48fb1;
+}
+
+.uk-button-primary {
+    background-color: #f48fb1;
+    font-family: "Poppins", sans-serif;
 }
 
 .uk-text-meta {

@@ -15,7 +15,7 @@
                     <a href="#" style="color: black; font-weight: bold">Home</a>
                 </li>
                 <li>
-                    <router-link :to="{name: 'Dashboard', params:{userid: userid}}">Dashboard</router-link>
+                    <router-link to="/dashboard">Dashboard</router-link>
                 </li>
                 <li>
                     <a href="#">Help</a>
@@ -24,6 +24,7 @@
         </div>
         <div class="uk-section uk-section-muted uk-width-2-3">
             <div class="uk-container uk-container-expand">
+
                 <div class="uk-flex uk-flex-middle">
                     <h2>Open Issues</h2>
                     <IssueCreation class="uk-navbar-right"></IssueCreation>
@@ -47,7 +48,7 @@ export default {
   name: "Home",
   data: function() {
     return {
-      userid: 1,
+      username: null,
       issues: [
         {
           id: 1,
