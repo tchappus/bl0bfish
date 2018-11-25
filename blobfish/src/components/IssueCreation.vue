@@ -84,6 +84,7 @@
         },
         methods: {
             suberino: function (){
+                var self = this;
                 let payload = {
                     title: this.Title,
                     severity: this.Severity,
@@ -98,8 +99,9 @@
                 console.log(querystring);
                 axios.get(querystring)
                     .then((res)=>{
-                        UIkit.notification("Sucessfully Added!", 'success');
+                        UIkit.notification("Successfully Added!", 'success');
                         console.log(res.data); 
+                        self.$emit('new-issue');
                     });
             }
         }

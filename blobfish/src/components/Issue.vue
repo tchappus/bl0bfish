@@ -25,7 +25,7 @@
                     <div class="uk-width-1-2 uk-text-center">
                         <pie-chart
                             :data="chartData"
-                            :colors="['#f48fb1', '#f8f8f8']"
+                            :colors="['#f48fb1', 'grey']"
                             :donut="true"
                             :legend="false"
                         ></pie-chart>
