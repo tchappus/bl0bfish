@@ -12,8 +12,8 @@
                     </div>
                 </li>
                 <li>
-                    <router-link to="/" style="color: black; font-weight: bold">
-                        <span uk-icon="icon: chevron-left"></span>Back
+                    <router-link to="/" style="color: black;">
+                        <span uk-icon="icon: chevron-left"></span>Home
                     </router-link>
                 </li>
             </ul>
