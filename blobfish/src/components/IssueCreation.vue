@@ -48,14 +48,14 @@
                     <div class="uk-margin"> 
                         <label class="uk-form-label" for="form-stacked-text">Summary</label>
                         <div class="uk-form-controls">
-                            <textarea class="uk-textarea" type="text" placeholder="Describe the Problem" v-model="Summary"></textarea>
+                            <textarea class="uk-textarea" type="text" placeholder="Describe the Issue" v-model="Summary"></textarea>
                         </div>
                     </div>
 
                     <div class="uk-margin"> 
                         <label class="uk-form-label" for="form-stacked-text">Completion Goals</label>
                         <div class="uk-form-controls">
-                            <textarea class="uk-textarea" type="text" placeholder="Define the solved problem will look like" v-model="CompletionGoals"></textarea>
+                            <textarea class="uk-textarea" type="text" placeholder="Define what the solution would look like" v-model="CompletionGoals"></textarea>
                         </div>
                     </div>
 
@@ -103,4 +103,13 @@
     }
 </script>
 <style scoped>
+
+.uk-button-primary, .uk-button-default, #modal-example, h2 {
+    font-family: "Poppins", sans-serif;
+}
+
+.uk-button-primary {
+    background-color: #f48fb1;
+}
+
 </style>

@@ -16,12 +16,6 @@
                         <span uk-icon="icon: chevron-left"></span>Back
                     </router-link>
                 </li>
-                <li>
-                    <a href="#">Profile</a>
-                </li>
-                <li>
-                    <a href="#">Help</a>
-                </li>
             </ul>
         </div>
         <div class="uk-section uk-section-muted uk-width-2-3">
@@ -38,12 +32,18 @@
                         <h4>{{issue.percentComplete}}% Complete</h4>
                     </div>
                     <div class="uk-width-1-2 uk-flex uk-flex-middle uk-text-center">
-                        <h2 style="color: #d32f2f;">
-                            Severity Level:
-                            <br>{{issue.severity}}
+                        <h2 style="color: #d32f2f;">Severity Level:
+                            <br>
+                            {{issue.severity}}
                         </h2>
                     </div>
                     <br>
+                    <div class="uk-width-1-5">
+                        <h5>Author:</h5>
+                    </div>
+                    <div class="uk-width-4-5">
+                        <p>{{issue.author}}</p>
+                    </div>
                     <div class="uk-width-1-5">
                         <h5>Must Complete By:</h5>
                     </div>
@@ -65,12 +65,22 @@
                         <p>{{issue.goals}}</p>
                     </div>
                     <div class="uk-width-1-1">
-                        <h2>Actions</h2>
+                        <div class="uk-flex uk-flex-middle">
+                            <h2>Actions</h2>
+                            <ActionCreation issueid="issue.id" class="uk-navbar-right"></ActionCreation>
+                        </div>
                         <ul uk-accordion="multiple: true">
                             <li v-for="(action, index) in actions">
                                 <a class="uk-accordion-title" href="#">{{index+1}}. {{action.title}}</a>
                                 <div class="uk-accordion-content">
-                                    <p></p>
+                                    <p>{{action.summary}}</p>
+                                    <ul>
+                                        <li v-for="inst in action.instructions">{{inst}}</li>
+                                    </ul>
+                                    <button
+                                        class="uk-button uk-button-primary"
+                                        :click="takeAction(action)"
+                                    >Take Action</button>
                                 </div>
                             </li>
                         </ul>
@@ -83,13 +93,19 @@
 
 <script>
 import axios from "axios";
+import ActionCreation from "./ActionCreation";
 
 export default {
   name: "Issue",
+  components: {
+    ActionCreation
+  },
   data: function() {
     return {
+      userid: 1,
       issue: {
         id: 4,
+        author: "Trent Chappus",
         title: "First Nations community without safe drinking water",
         percentComplete: 20,
         severity: "HIGH",
@@ -100,31 +116,40 @@ export default {
           "Fresh drinking water is readily accessible to all First Nations communities in Canada."
       },
       actions: [
-          {
-              title: "Research new & innovative ways to filter water in affected communities",
-              summary: "With more efficient and cost effective options, affected First Nations communities can more easily reach a long-term solution. This action is for researchers, scientists, and engineers.",
-              instructions: ["Establish a nation-wide collaborative effort between researchers, to effectively communicate ongoing research and lessons learned."],
-          },
-          {
-              title: "Raise funds for water filtration plants",
-              summary: "Water filtration plants can change a community for the better by providing clean water and employment opportunities",
-              instructions: ["Donate now"]
+        {
+          title:
+            "Research new & innovative ways to filter water in affected communities",
+          summary:
+            "With more efficient and cost effective options, affected First Nations communities can more easily reach a long-term solution. This action is for researchers, scientists, and engineers.",
+          instructions: [
+            "Establish a nation-wide collaborative effort between researchers, to effectively communicate ongoing research and lessons learned."
+          ]
         },
         {
-              title: "Help deliver purified water to affected communities",
-              summary: "",
-              instructions: ["Sign up to deliver today"],
-          },
-          {
-              title: "Email your Minister of Parliament about your concern regarding this issue",
-              summary: "",
-              instructions: ["Email now"]
-          }
-          
+          title: "Raise funds for water filtration plants",
+          summary:
+            "Water filtration plants can change a community for the better by providing clean water and employment opportunities",
+          instructions: ["Donate now"]
+        },
+        {
+          title: "Help deliver purified water to affected communities",
+          summary: "",
+          instructions: ["Sign up to deliver today"]
+        },
+        {
+          title:
+            "Email your Member of Parliament about your concern regarding this issue",
+          summary: "",
+          instructions: ["Email now"]
+        }
       ]
     };
   },
-  methods: {},
+  methods: {
+    takeAction: function(action) {
+      //make POST request
+    }
+  },
   computed: {
     chartData: function() {
       const percentUncomplete = 100 - this.issue.percentComplete;
@@ -152,5 +177,10 @@ ul {
 .header {
   font-weight: 700;
   color: #f48fb1;
+}
+
+.uk-button-primary {
+  font-family: "Poppins", sans-serif;
+  background-color: #f48fb1;
 }
 </style>
