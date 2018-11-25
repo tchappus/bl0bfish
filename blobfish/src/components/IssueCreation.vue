@@ -1,0 +1,106 @@
+<template>
+    <div>
+        <!-- This is a button toggling the modal -->
+        <button class="uk-button uk-button-default uk-margin-small-right" type="button" uk-toggle="target: #modal-example">Submit an Issue</button>
+
+        <!-- This is the modal -->
+        <div id="modal-example" uk-modal >
+            <div class="uk-modal-dialog uk-modal-body">
+                <h2 class="uk-modal-title">Issue Identification</h2>
+
+                <form class="uk-form-stacked">
+
+                    <div class="uk-margin"> 
+                        <label class="uk-form-label" for="form-stacked-text">Title</label>
+                        <div class="uk-form-controls">
+                            <input v-model="Title" class="uk-input" type="text" placeholder="Title">
+                        </div>
+                    </div>
+
+                    <div class="uk-margin"> 
+                        <label class="uk-form-label" for="form-stacked-text">Severity</label>
+                        <div class="uk-form-controls">
+                            <select class="uk-select" v-model="Severity">
+                                <option>Low</option>
+                                <option>Normal</option>
+                                <option>High</option>
+                                <option>Urgent</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="uk-margin"> 
+                        <label class="uk-form-label" for="form-stacked-text">Must Complete By</label>
+                        <div class="uk-form-controls">
+                            <select class="uk-select" v-model="CompletionDate">
+                                <option>This week</option>
+                                <option>This Month</option>
+                                <option>Next 3 Months</option>
+                                <option>Next 6 Months</option>
+                                <option>This Year</option>
+                                <option>Next Year</option>
+                                <option>Next 2 Year</option>
+                                <option>Next 5 Year</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="uk-margin"> 
+                        <label class="uk-form-label" for="form-stacked-text">Summary</label>
+                        <div class="uk-form-controls">
+                            <textarea class="uk-textarea" type="text" placeholder="Describe the Problem" v-model="Summary"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="uk-margin"> 
+                        <label class="uk-form-label" for="form-stacked-text">Completion Goals</label>
+                        <div class="uk-form-controls">
+                            <textarea class="uk-textarea" type="text" placeholder="Define the solved problem will look like" v-model="CompletionGoals"></textarea>
+                        </div>
+                    </div>
+
+                </form>
+                <p class="uk-text-right">
+                    <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
+                    <button class="uk-button uk-button-primary" type="button" v-on:click="suberino">Submit</button>
+                </p>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    import axios from 'axios';
+    export default {
+        name: "jimmer",
+        data: function(){
+            return{
+                    Title: null,
+                    Severity: null,
+                    CompletionDate: null,
+                    Summary: null,
+                    CompletionGoals: null
+                };
+        },
+        methods: {
+            suberino: function (){
+                let payload = {
+                    Title: this.Title,
+                    Severity: this.Severity,
+                    CompletionDate: this.CompletionDate,
+                    Summary: this.Summary,
+                    CompletionGoals: this.CompletionGoals,
+                    Actions: []
+                }
+                let insertme = JSON.stringify(payload);
+                let querystring = `https://jdomaga.lib.id/blobfish-backend/issuecreate/?payload=${insertme}`
+                console.log(querystring);
+                axios.get(querystring)
+                    .then((res)=>{
+                        console.log(res);
+                    });
+            }
+        }
+    }
+</script>
+<style scoped>
+</style>
