@@ -14,16 +14,15 @@
                 <li>
                     <a href="#" style="color: black; font-weight: bold">Home</a>
                 </li>
-                <li>
+                <li v-if="loggedIn">
                     <router-link to="/dashboard">Dashboard</router-link>
                 </li>
                 <li>
                     <a href="#">Help</a>
                 </li>
                 <li>
-                    <p>todo: remove, is temp</p>
-                    <input v-model="username" class="uk-input" type="text" placeholder="login">
-                    <button v-on:click="login">login</button>
+                    <button class="uk-button uk-button-default uk-margin-small-right" v-if="!loggedIn" type="button" uk-toggle="target: #modal-login">Login</button>
+                    <button class="uk-button uk-button-default uk-margin-small-right" v-if="!loggedIn" type="button" uk-toggle="target: #modal-signup">Sign Up</button>
                 </li>
             </ul>
         </div>
@@ -34,12 +33,55 @@
                     <IssueCreation class="uk-navbar-right" v-on:new-issue="refreshIssues"></IssueCreation>
                 </div>
                 <div v-for="issue of issues">
-                    <div v-on:click="nav(issue._id)">
+                    <div v-on:click="nav(issue.title)">
                         <IssueCard :issue="issue"></IssueCard>
                     </div>
                 </div>
             </div>
         </div>
+
+    <!-- modals here, one for login one for signup -->
+    <!-- TODO: transition these to their own component, use event propogation to move the junk around, or mayberedux? -->
+    <!--  login -->
+    <div id="modal-login" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body">
+          <button class="uk-modal-close-default" type="button" uk-close></button>
+          <h2 class="uk-modal-title">Login</h2>
+            <form>
+              <fieldset class="uk-fieldset">
+                  <legend class="uk-legend-small">Welcome back!</legend>
+                  <div class="uk-margin">
+                      <input class="uk-input" v-model="username" type="text" placeholder="Username" required>
+                  </div>
+                  <div class="uk-margin">
+                      <input class="uk-input" v-model="password" type="password" placeholder="Password" required>
+                  </div>
+                  <button class="uk-button uk-button-default uk-margin-small-right" type="submit" v-on:click="login">login</button>
+              </fieldset>
+          </form>
+      </div>
+    </div>
+    <!-- signup -->
+    <!-- TODO: facebook, gmail etc integration? OAUTH2? more info for creating their account? email confirmation? -->
+    <div id="modal-signup" uk-modal>
+      <div class="uk-modal-dialog uk-modal-body">
+          <button class="uk-modal-close-default" type="button" uk-close></button>
+          <h2 class="uk-modal-title">Sign Up</h2>
+          <form>
+              <fieldset class="uk-fieldset">
+                  <legend class="uk-legend-small">Welcome!</legend>
+                  <div class="uk-margin">
+                      <input class="uk-input" v-model="username" type="text" placeholder="Username" required>
+                  </div>
+                  <div class="uk-margin">
+                      <input class="uk-input" v-model="password" type="password" placeholder="Password" required>
+                  </div>
+                  <button class="uk-button uk-button-default uk-margin-small-right" type="submit" v-on:click="signup">Sign Up</button>
+              </fieldset>
+          </form>
+          </div>
+    </div>
+
     </div>
 </template>
 
@@ -53,34 +95,30 @@ export default {
   data: function() {
     return {
       username: "",
+      password: "",
+      loggedIn: false,
       issues: []
-      // [{
-      //   id: 1,
-      //   title: "Local kindergarten students in need of school supplies",
-      //   percentComplete: 50
-      // },
-      // {
-      //   id: 2,
-      //   title: "Roadside trash is at an all-time high",
-      //   percentComplete: 75
-      // },
-      // {
-      //   id: 3,
-      //   title: "More young women & girls needed in STEM fields",
-      //   percentComplete: 25
-      // },
-      // {
-      //   id: 4,
-      //   title: "First Nations community without safe drinking water",
-      //   percentComplete: 20
-      // },
-      // {
-      //   title: ""
-      // }]
     };
   },
   methods: {
+    //TODO: verify here, and exchange for like a key or smthn
+    //TODO: add a logout
     login: function() {
+      let username = this.username.trim();
+      let password = this.password.trim();
+      if(!username || !password){
+        return;
+      }
+      localStorage.username = this.username;
+      alert(`current user: ${this.username}`);
+    },
+    // TODO: same, make them relogin? also store a session key w/ expiration instead of just the username...
+    signup: function() {
+      let username = this.username.trim();
+      let password = this.password.trim();
+      if(!username || !password){
+        return;
+      }
       localStorage.username = this.username;
       alert(`current user: ${this.username}`);
     },
@@ -88,23 +126,21 @@ export default {
       this.$router.push({ name: "Issue", params: { issueid: id } });
     },
     refreshIssues: function() {
-      let url = `https://jdomaga.lib.id/blobfish-backend/getallissues`;
+      var url ="http://localhost:3000/issue/all";
       var self = this;
       console.log(url);
       axios.get(url).then(res => {
-        let result = JSON.parse(res.data);
-        console.log("got res", result);
-        self.issues = [];
-        for (let iss of result) {
-          console.log("iss", iss);
-          if (iss.actions.length) {
-          } else {
-            iss.percentComplete = 20;
-          }
-          self.issues.push(iss);
+      let result = res.data;
+      for (let iss in result) {
+        // TODO: here we need percentage of actions complete and shietttttt
+        if (!result[iss].actions) {
+          result[iss].percentComplete = 10;
+        } else {
+          result[iss].percentComplete = 20;
         }
-      });
-      console.log("completed", this.issues);
+        self.issues.push(result[iss]);
+      }
+    })
     }
   },
   components: {
@@ -112,22 +148,24 @@ export default {
     IssueCreation
   },
   mounted: function() {
-    let url = `https://jdomaga.lib.id/blobfish-backend/getallissues`;
+    //TODO: add some indicator if the person is logged in
+    if(localStorage.username)
+      this.loggedIn = true;
+
     var self = this;
-    console.log(url);
+    var url ="http://localhost:3000/issue/all";
     axios.get(url).then(res => {
-      let result = JSON.parse(res.data);
-      console.log("got res", result);
-      for (let iss of result) {
-        console.log("iss", iss);
-        if (iss.actions.length) {
+      let result = res.data;
+      for (let iss in result) {
+        // TODO: here we need percentage of actions complete and shietttttt
+        if (!result[iss].actions) {
+          result[iss].percentComplete = 10;
         } else {
-          iss.percentComplete = 20;
+          result[iss].percentComplete = 20;
         }
-        self.issues.push(iss);
+        self.issues.push(result[iss]);
       }
-    });
-    console.log("completed", this.issues);
+    })
   }
 };
 </script>

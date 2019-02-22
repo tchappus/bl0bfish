@@ -4,15 +4,15 @@
         <button
             class="uk-button uk-button-default uk-margin-small-right"
             type="button"
-            uk-toggle="target: #Action-create-modal"
-        >Add an Action</button>
+            uk-toggle="target: #Task-create-modal"
+        >Add a Task</button>
         <!-- This is the modal -->
-        <div id="Action-create-modal" uk-modal>
+        <div id="Task-create-modal" uk-modal>
             <div class="uk-modal-dialog uk-modal-body">
-                <h2 class="uk-modal-title">Action Creation</h2>
+                <h2 class="uk-modal-title">Task Creation</h2>
                 <form class="uk-form-stacked">
                     <div class="uk-margin">
-                        <label class="uk-form-label" for="form-stacked-text">Action Title</label>
+                        <label class="uk-form-label" for="form-stacked-text">Task Title</label>
                         <div class="uk-form-controls">
                             <input v-model="Title" class="uk-input" type="text" placeholder="Title">
                         </div>
@@ -23,7 +23,7 @@
                             <textarea
                                 class="uk-textarea"
                                 type="text"
-                                placeholder="Describe the Action and the reasoning for it"
+                                placeholder="Describe the Task and the reasoning for it"
                                 v-model="Summary"
                             ></textarea>
                         </div>
@@ -34,7 +34,7 @@
                             <input
                                 class="uk-textarea uk-margin-small-right"
                                 type="text"
-                                placeholder="what steps should be done to complete this Action"
+                                placeholder="what steps should be done to complete this Task"
                                 v-model="step"
                             >
                             <button
@@ -87,17 +87,18 @@ export default {
       let payload = {
         title: this.Title,
         summary: this.Summary,
-        instructions: this.Instructions,
-        completed: false,
-        issueId: this.issueid
+        instructions: this.Instructions
       };
-      let insertme = JSON.stringify(payload);
-      let querystring = `https://jdomaga.lib.id/blobfish-backend/addaction/?payload=${insertme}`;
-      console.log(querystring);
-      UIkit.notification("Sucessfully Added!", 'success');
-      axios.get(querystring).then(res => {
+      let issueTitle = window.location.href.split("/").pop()
+      let url = `http://localhost:3000/task/create/${issueTitle}/`;
+     
+     axios.post(url, payload).then(res => {
         console.log(res); 
-      });
+      }).then(
+        (msg) => {
+            UIkit.notification("Sucessfully Added!", 'success')
+            console.log(msg);
+        });
     },
 
     addStep: function() {
@@ -114,7 +115,7 @@ export default {
 <style scoped>
 .uk-button-primary,
 .uk-button-default,
-#Action-create-modal,
+#Task-create-modal,
 h2 {
   font-family: "Poppins", sans-serif;
 }

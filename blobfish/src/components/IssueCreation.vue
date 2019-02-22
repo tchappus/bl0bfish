@@ -62,7 +62,7 @@
                 </form>
                 <p class="uk-text-right">
                     <button class="uk-button uk-button-default uk-modal-close" type="button">Cancel</button>
-                    <button class="uk-button uk-button-primary uk-modal-close" type="button" v-on:click="suberino">Submit</button>
+                    <button class="uk-button uk-button-primary uk-modal-close" type="button" v-on:click="submitIssue">Submit</button>
                 </p>
             </div>
         </div>
@@ -83,7 +83,7 @@
                 };
         },
         methods: {
-            suberino: function (){
+            submitIssue: function (){
                 var self = this;
                 let payload = {
                     title: this.Title,
@@ -91,14 +91,12 @@
                     completionDate: this.CompletionDate,
                     summary: this.Summary,
                     completionGoals: this.CompletionGoals,
-                    actions: [],
                     author: localStorage.username
                 }
-                let insertme = JSON.stringify(payload);
-                let querystring = `https://jdomaga.lib.id/blobfish-backend/issuecreate/?payload=${insertme}`
-                console.log(querystring);
-                axios.get(querystring)
+                console.log('hitting localhost:3000/issue/create with: ', payload);
+                axios.put('http://localhost:3000/issue/create', payload)
                     .then((res)=>{
+                        console.log('whadafaq');
                         UIkit.notification("Successfully Added!", 'success');
                         console.log(res.data); 
                         self.$emit('new-issue');

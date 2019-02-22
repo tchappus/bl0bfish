@@ -48,7 +48,7 @@
                         <h5>Must Complete By:</h5>
                     </div>
                     <div class="uk-width-4-5">
-                        <p>{{issue.targetCompletion}}</p>
+                        <p>{{issue.completionDate}}</p>
                     </div>
                     <br>
                     <div class="uk-width-1-5">
@@ -66,21 +66,21 @@
                     </div>
                     <div class="uk-width-1-1">
                         <div class="uk-flex uk-flex-middle">
-                            <h2>Actions</h2>
-                            <ActionCreation :issueid="$route.params.issueid" class="uk-navbar-right"></ActionCreation>
+                            <h2>Tasks</h2>
+                            <taskCreation :issueid="$route.params.issueid" class="uk-navbar-right"></taskCreation>
                         </div>
                         <ul uk-accordion="multiple: true">
-                            <li v-for="(action, index) in actions">
-                                <a class="uk-accordion-title" href="#">{{index+1}}. {{action.title}}</a>
+                            <li v-for="(task, index) in tasks">
+                                <a class="uk-accordion-title" href="#">{{index+1}}. {{task.title}}</a>
                                 <div class="uk-accordion-content">
-                                    <p>{{action.summary}}</p>
+                                    <p>{{task.summary}}</p>
                                     <ul>
-                                        <li v-for="inst in action.instructions">{{inst}}</li>
+                                        <li v-for="inst in task.instructions">{{inst}}</li>
                                     </ul>
                                     <button
                                         class="uk-button uk-button-primary"
-                                        :click="takeAction(action)"
-                                    >Take Action</button>
+                                        :click="taketask(task)"
+                                    >Take task</button>
                                 </div>
                             </li>
                         </ul>
@@ -93,71 +93,30 @@
 
 <script>
 import axios from "axios";
-import ActionCreation from "./ActionCreation";
+import taskCreation from "./TaskCreation";
 
 export default {
   name: "Issue",
   components: {
-    ActionCreation
+    taskCreation
   },
   data: function() {
     return {
       userid: localStorage.username,
       issue: {
-        id: 4,
         author: null,
         title: null,
         percentComplete: null,
         severity: null,
-        targetCompletion: null,
+        completionDate: null,
         summary: null,
         completionGoals: null
       },
-    //   {
-    //     id: 4,
-    //     author: "Trent Chappus",
-    //     title: "First Nations community without safe drinking water",
-    //     percentComplete: 20,
-    //     severity: "HIGH",
-    //     targetCompletion: "December 2019",
-    //     summary:
-    //       "The northern Ontario community of Kashechewan made headlines all over Canada in 2005, when its poor water quality and unsanitary conditions forced the evacuation of 1,000 of its residents. The evacuation order raised awareness about a much larger problem: more than 80 First Nations communities are currently under “boiled water advisories” and 21 communities are deemed to be at high-risk for contamination. In Canada, contamination and inadequate water and sanitation services in First Nations communities are a real and present threat to human health and the environment. - https://canadians.org/fn-water",
-    //     goals:
-    //       "Fresh drinking water is readily accessible to all First Nations communities in Canada."
-    //   },
-      actions: []
-    //   [
-    //     {
-    //       title:
-    //         "Research new & innovative ways to filter water in affected communities",
-    //       summary:
-    //         "With more efficient and cost effective options, affected First Nations communities can more easily reach a long-term solution. This action is for researchers, scientists, and engineers.",
-    //       instructions: [
-    //         "Establish a nation-wide collaborative effort between researchers, to effectively communicate ongoing research and lessons learned."
-    //       ]
-    //     },
-    //     {
-    //       title: "Raise funds for water filtration plants",
-    //       summary:
-    //         "Water filtration plants can change a community for the better by providing clean water and employment opportunities",
-    //       instructions: ["Donate now"]
-    //     },
-    //     {
-    //       title: "Help deliver purified water to affected communities",
-    //       summary: "",
-    //       instructions: ["Sign up to deliver today"]
-    //     },
-    //     {
-    //       title:
-    //         "Email your Member of Parliament about your concern regarding this issue",
-    //       summary: "",
-    //       instructions: ["Email now"]
-    //     }
-    //   ]
+      tasks: []
     };
   },
   methods: {
-    takeAction: function(action) {
+    taketask: function(task) {
       //make POST request
     }
   },
@@ -171,18 +130,17 @@ export default {
     }
   },
   mounted: function(){
-    let url =`https://jdomaga.lib.id/blobfish-backend/getissue?id=${this.$route.params.issueid}`;
+    var title = window.location.href.split("/").pop()
+    console.log(title);
+    var url = `http://localhost:3000/issue/single/${title}`;
     var self = this;
-    console.log(url);
     axios.get(url).then((res)=>{
         console.log('res',res.data);
-        self.issue = JSON.parse(res.data);
+        self.issue = res.data;
+        //TODO: recalc the steps completed hre? idk...
+        if(!self.issue.percentComplete)
+            self.issue.percentComplete =10;
     });
-    console.log(this.issue);
-    // for(let act of this.issue.actions){
-    //     alert();
-    // }
-
   }
 };
 </script>
